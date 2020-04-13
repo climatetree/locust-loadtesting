@@ -141,10 +141,10 @@ class UserBehavior(TaskSet):
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/wiki?page=1&limit=20")
 
         # find all stoies by sector
-        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/?page=1&limit=20")
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/sector/wiki?page=1&limit=20")
 
         # find all stoies by stretegy
-        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/:strategy?page=1&limit=20")
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/strategy/wiki?page=1&limit=20")
 
         # get all media types (future)
         # self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/mediaTypes")

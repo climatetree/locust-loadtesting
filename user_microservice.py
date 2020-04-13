@@ -12,7 +12,7 @@ class UserBehavior(TaskSet):
     #create user 
     #successful login 
     def login(self):
-        response = self.client.post("https://usermicroservice-climatetree.azurewebsites.net/user/login", json={
+        response = self.client.post("https://usermicroservice-climatetree.azurewebsites.net/v1/user/login", json={
             "username":"load_test_user",
             "email":"<load_test_user@gmail.com>"
         })
@@ -27,28 +27,28 @@ class UserBehavior(TaskSet):
                 unauthorized.success()
 
         #method not allow
-        with self.client.post('https://usermicroservice-climatetree.azurewebsites.net/user/login1',json={"username":"load_test_user", "email":"<load_test_user@gmail.com>"}, catch_response=True) as method:
+        with self.client.post('https://usermicroservice-climatetree.azurewebsites.net/v1/user/login1',json={"username":"load_test_user", "email":"<load_test_user@gmail.com>"}, catch_response=True) as method:
             if (method.status_code==405):
                 method.success()
 
         #serach user by name
-        by_name = self.client.get("https://usermicroservice-climatetree.azurewebsites.net/user/searchname", json={
+        by_name = self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/searchname", json={
             "username":"load_test_user"
         }, headers=self.headers)
         print(by_name.json())
 
         #search user by role
-        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/user/searchrole", json={
+        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/searchrole", json={
             "roleId":3
         })
 
         #search user by email
-        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/user/searchemail", json={
+        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/searchemail", json={
             "email":"<load_test_user@gmail.com>"
         }, headers=self.headers)
 
         #search blacklisted user
-        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/user/flagged_users")
+        self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/flagged_users")
 
 
 class WebsiteUser(HttpLocust):
