@@ -11,6 +11,7 @@ class UserBehavior(TaskSet):
 
     @task(1)
     def story_lifetime(self):
+
         #create a story
         story = self.client.post("https://backend-mongo-stories.azurewebsites.net/v1/stories/create", json={
         "user_id" : 323,
@@ -54,7 +55,6 @@ class UserBehavior(TaskSet):
 
         story_id = story.json()["story_id"]
         user_id = str(story.json()["user_id"])
-        print(story_id)
 
         #find story by story id 
         story_url = "https://backend-mongo-stories.azurewebsites.net/v1/stories/story/" + story_id
@@ -102,24 +102,53 @@ class UserBehavior(TaskSet):
         #     "username" “ 
         #     })
 
-        #delete a comment 
+        # delete a comment 
         # delete_comment_url = "" 
         # self.client.delete()
 
-        #delete a story 
-        delete_url = "https://backend-mongo-stories.azurewebsites.net/v1/stories/delete/" + story_id
-        self.client.delete(delete_url)
-
-        #find a story by place id
+        # find a story by place id
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories?page=1&limit=100")
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/place/1")
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/topStories/3")
 
-        #find all comemnts
+        # find all comemnts
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/comment")
 
-        #find top n storeis 
-        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/topStories/:numberOfStories")
+        # find top n storeis 
+        # where n = 5
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/topStories/5")
+
+        # flag a story
+        self.client.put("https://backend-mongo-stories.azurewebsites.net/v1/stories/" + story_id +"/flag/" + user_id)
+
+        # unflag a story
+        self.client.put("https://backend-mongo-stories.azurewebsites.net/v1/stories/" + story_id +"/unflag/" + user_id)
+
+
+        # delete a story 
+        delete_url = "https://backend-mongo-stories.azurewebsites.net/v1/stories/delete/" + story_id
+        self.client.delete(delete_url)
+
+    @task(1)
+    def global_scale(self):
+        #get a preview of webpage
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/getPreview?hyperlink=https://www.google.com")
+
+        # find all unrated story
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/unrated?page=1&limit=20")
+
+        # find all stories by solution
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/wiki?page=1&limit=20")
+
+        # find all stoies by sector
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/?page=1&limit=20")
+
+        # find all stoies by stretegy
+        self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/solution/:strategy?page=1&limit=20")
+
+        # get all media types (future)
+        # self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories/mediaTypes")
+
 
 class WebsiteUser(HttpLocust):
     task_set = UserBehavior
