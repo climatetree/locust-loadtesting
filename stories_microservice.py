@@ -5,7 +5,7 @@ class UserBehavior(TaskSet):
     @task(1)
     def index(self):
         #get all stories
-        self.client.get("/stories")
+        # self.client.get("/stories")
         self.client.get("https://backend-mongo-stories.azurewebsites.net/v1/stories?page=1&limit=100")
 
 
