@@ -53,7 +53,6 @@ class UserBehavior(TaskSet):
 
         #serach user by name
         by_name = self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/searchname/temp_user", headers=self.headers)
-        user_id = str(by_name.json()["users"][0]["userId"])
 
         # serach user by role
         role_url = "https://usermicroservice-climatetree.azurewebsites.net/v1/user/searchrole/3"
@@ -65,21 +64,37 @@ class UserBehavior(TaskSet):
         #search blacklisted user
         self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/flagged_users")
 
-        #update user role 
-        update_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/" + user_id + "/2"
-        self.client.put(update_url, headers = self.headers)
+        #update user role
+        all_users = by_name.json()["users"] 
+        if (len(all_users) != 0):
+            cur_user_id = str(by_name.json()["users"][0]["userId"])
+            role_id = all_users[0]["role"]["roleId"]
+            if (cur_user_id is not None and role_id is not None and role_id != 2):
+                update_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/" + cur_user_id + "/2"
+                self.client.put(update_url, headers = self.headers)
+
+            if (cur_user_id is not None and role_id is not None and role_id != 3):
+                update_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/" + cur_user_id + "/3"
+                self.client.put(update_url, headers = self.headers)
 
         # black list user 
-        baned_user_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/blacklist/" + user_id
-        self.client.put(baned_user_url, headers=self.headers)
-
-        # unblacklist
-        unbaned_user_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/unblacklist/" + user_id
-        self.client.put(unbaned_user_url, headers=self.headers)
-
+        if (len(all_users) != 0):
+            cur_user_id = str(by_name.json()["users"][0]["userId"])
+            blacklisted = all_users[0]["blacklisted"] 
+            # black list user 
+            if (cur_user_id is not None and not blacklisted):
+                baned_user_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/blacklist/" + cur_user_id
+                self.client.put(baned_user_url, headers=self.headers)
+            # unblacklist 
+            elif (cur_user_id is not None and blacklisted):
+                unbaned_user_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/unblacklist/" + cur_user_id
+                self.client.put(unbaned_user_url, headers=self.headers)
+        
+        if (len(by_name.json()["users"]) != 0):
+            cur_user_id = str(by_name.json()["users"][0]["userId"])
         #request role change 
-        role_change_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/request_role_change/" + user_id + "/2"
-        self.client.post("http://usermicroservice-climatetree.azurewebsites.net/v1/user/request_role_change/3/2", headers=self.headers)
+            role_change_url = "http://usermicroservice-climatetree.azurewebsites.net/v1/user/request_role_change/" + cur_user_id + "/2"
+            self.client.post("http://usermicroservice-climatetree.azurewebsites.net/v1/user/request_role_change/3/2", headers=self.headers)
 
         # get all role change requests
         self.client.get("https://usermicroservice-climatetree.azurewebsites.net/v1/user/get_all_role_update_requests", headers=self.headers)
